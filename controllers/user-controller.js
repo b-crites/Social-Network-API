@@ -16,7 +16,6 @@ const userController = {
         res.sendStatus(400);
       });
   },
-
   // Getting one user by id
   getUserById({ params }, res) {
     User.findOne({ _id: params.id })
@@ -33,7 +32,7 @@ const userController = {
         if (!dbUserData) {
           return res
             .status(404)
-            .json({ message: "No user found with this id!" });
+            .json({ message: "No user found matching this id" });
         }
         res.json(dbUserData);
       })
@@ -42,14 +41,12 @@ const userController = {
         res.sendStatus(400);
       });
   },
-
   // Creating user
   createUser({ body }, res) {
     User.create(body)
       .then((dbUserData) => res.json(dbUserData))
       .catch((err) => res.json(err));
   },
-
   // Updating user by id
   updateUser({ params, body }, res) {
     User.findOneAndUpdate({ _id: params.id }, body, {
@@ -58,31 +55,28 @@ const userController = {
     })
       .then((dbUserData) => {
         if (!dbUserData) {
-          res.status(404).json({ message: "No user found with this id!" });
+          res.status(404).json({ message: "No user found matching this id" });
           return;
         }
         res.json(dbUserData);
       })
       .catch((err) => res.json(err));
   },
-
   // Deleting user
   deleteUser({ params }, res) {
     User.findOneAndDelete({ _id: params.id })
       .then((dbUserData) => {
         if (!dbUserData) {
-          return res.status(404).json({ message: "No user with this id!" });
+          return res.status(404).json({ message: "No user matching this id" });
         }
-        // Getting the id of the user's thoughts and deleting all of them
-        // $in to find specific things
+       
         return Thought.deleteMany({ _id: { $in: dbUserData.thoughts } });
       })
       .then(() => {
-        res.json({ message: "User and associated thoughts deleted!" });
+        res.json({ message: "User and thoughts deleted" });
       })
       .catch((err) => res.json(err));
   },
-
   // Adding friend
   addFriend({ params }, res) {
     User.findOneAndUpdate(
@@ -92,14 +86,13 @@ const userController = {
     )
       .then((dbUserData) => {
         if (!dbUserData) {
-          res.status(404).json({ message: "No user with this id" });
+          res.status(404).json({ message: "No user matching this id" });
           return;
         }
         res.json(dbUserData);
       })
       .catch((err) => res.json(err));
   },
-
   // Deleting friend
   removeFriend({ params }, res) {
     User.findOneAndUpdate(
@@ -109,7 +102,7 @@ const userController = {
     )
       .then((dbUserData) => {
         if (!dbUserData) {
-          return res.status(404).json({ message: "No user with this id!" });
+          return res.status(404).json({ message: "No user matching this id" });
         }
         res.json(dbUserData);
       })

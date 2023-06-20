@@ -16,7 +16,6 @@ const thoughtController = {
         res.sendStatus(400);
       });
   },
-
   // Getting one Thought by id
   getThoughtById({ params }, res) {
     Thought.findOne({ _id: params.id })
@@ -27,7 +26,7 @@ const thoughtController = {
       .select("-__v")
       .then((dbThoughtData) => {
         if (!dbThoughtData) {
-          return res.status(404).json({ message: "No thought with this id!" });
+          return res.status(404).json({ message: "No thought(s) with this id" });
         }
         res.json(dbThoughtData);
       })
@@ -36,9 +35,7 @@ const thoughtController = {
         res.sendStatus(400);
       });
   },
-
   // Creating Thought
-  // Pushing the created thought's _id to the associated user's thoughts array field
   createThought({ params, body }, res) {
     Thought.create(body)
       .then(({ _id }) => {
@@ -52,10 +49,10 @@ const thoughtController = {
         if (!dbUserData) {
           return res
             .status(404)
-            .json({ message: "Thought created but no user with this id!" });
+            .json({ message: "Thought created but no user matching this id" });
         }
 
-        res.json({ message: "Thought successfully created!" });
+        res.json({ message: "Thought successfully created" });
       })
       .catch((err) => res.json(err));
   },
@@ -68,7 +65,7 @@ const thoughtController = {
     })
       .then((dbThoughtData) => {
         if (!dbThoughtData) {
-          res.status(404).json({ message: "No thought found with this id!" });
+          res.status(404).json({ message: "No thought found matching this id" });
           return;
         }
         res.json(dbThoughtData);
@@ -81,13 +78,13 @@ const thoughtController = {
     Thought.findOneAndDelete({ _id: params.id })
       .then((dbThoughtData) => {
         if (!dbThoughtData) {
-          return res.status(404).json({ message: "No thought with this id!" });
+          return res.status(404).json({ message: "No thought matching this id" });
         }
 
-        // Removing thought id from user's `thoughts` field
+        // Removing thought id
         return User.findOneAndUpdate(
           { thoughts: params.id },
-          //$pull removes from an existing values that match a specified condition.
+         
           { $pull: { thoughts: params.id } }, 
           { new: true }
         );
@@ -96,9 +93,9 @@ const thoughtController = {
         if (!dbUserData) {
           return res
             .status(404)
-            .json({ message: "Thought created but no user with this id!" });
+            .json({ message: "Thought created but no user mtaching this id" });
         }
-        res.json({ message: "Thought deleted successfully !" });
+        res.json({ message: "Thought successfully deleted " });
       })
       .catch((err) => res.json(err));
   },
